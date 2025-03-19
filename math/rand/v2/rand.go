@@ -268,12 +268,12 @@ func Uint32() uint32 { return globalRand.Uint32() }
 
 // Uint64N returns, as a uint64, a pseudo-random number in the half-open interval [0,n)
 // from the default Source.
-// It panics if n <= 0.
+// It panics if n == 0.
 func Uint64N(n uint64) uint64 { return globalRand.Uint64N(n) }
 
 // Uint32N returns, as a uint32, a pseudo-random number in the half-open interval [0,n)
 // from the default Source.
-// It panics if n <= 0.
+// It panics if n == 0.
 func Uint32N(n uint32) uint32 { return globalRand.Uint32N(n) }
 
 // Uint64 returns a pseudo-random 64-bit value as a uint64
@@ -307,7 +307,7 @@ func IntN(n int) int { return globalRand.IntN(n) }
 
 // UintN returns, as a uint, a pseudo-random number in the half-open interval [0,n)
 // from the default Source.
-// It panics if n <= 0.
+// It panics if n == 0.
 func UintN(n uint) uint { return globalRand.UintN(n) }
 
 // N returns a pseudo-random number in the half-open interval [0,n) from the default Source.
@@ -322,7 +322,7 @@ func N[Int intType](n Int) Int {
 
 type intType interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 |
-		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
 }
 
 // Float64 returns, as a float64, a pseudo-random number in the half-open interval [0.0,1.0)
