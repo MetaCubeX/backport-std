@@ -6,10 +6,9 @@ package sync_test
 
 import (
 	"bytes"
-	. "github.com/metacubex/backport-std/sync"
+	"github.com/metacubex/backport-std/sync"
 	"runtime"
 	"runtime/debug"
-	"sync"
 	"testing"
 	_ "unsafe"
 )
@@ -18,7 +17,7 @@ import (
 
 func TestOnceFunc(t *testing.T) {
 	calls := 0
-	f := OnceFunc(func() { calls++ })
+	f := sync.OnceFunc(func() { calls++ })
 	allocs := testing.AllocsPerRun(10, f)
 	if calls != 1 {
 		t.Errorf("want calls==1, got %d", calls)
@@ -30,7 +29,7 @@ func TestOnceFunc(t *testing.T) {
 
 func TestOnceValue(t *testing.T) {
 	calls := 0
-	f := OnceValue(func() int {
+	f := sync.OnceValue(func() int {
 		calls++
 		return calls
 	})
@@ -49,7 +48,7 @@ func TestOnceValue(t *testing.T) {
 
 func TestOnceValues(t *testing.T) {
 	calls := 0
-	f := OnceValues(func() (int, int) {
+	f := sync.OnceValues(func() (int, int) {
 		calls++
 		return calls, calls + 1
 	})
@@ -99,7 +98,7 @@ func testOncePanicWith(t *testing.T, calls *int, f func(), check func(label stri
 
 func TestOnceFuncPanic(t *testing.T) {
 	calls := 0
-	f := OnceFunc(func() {
+	f := sync.OnceFunc(func() {
 		calls++
 		panic("x")
 	})
@@ -108,7 +107,7 @@ func TestOnceFuncPanic(t *testing.T) {
 
 func TestOnceValuePanic(t *testing.T) {
 	calls := 0
-	f := OnceValue(func() int {
+	f := sync.OnceValue(func() int {
 		calls++
 		panic("x")
 	})
@@ -117,7 +116,7 @@ func TestOnceValuePanic(t *testing.T) {
 
 func TestOnceValuesPanic(t *testing.T) {
 	calls := 0
-	f := OnceValues(func() (int, int) {
+	f := sync.OnceValues(func() (int, int) {
 		calls++
 		panic("x")
 	})
@@ -126,7 +125,7 @@ func TestOnceValuesPanic(t *testing.T) {
 
 func TestOnceFuncPanicNil(t *testing.T) {
 	calls := 0
-	f := OnceFunc(func() {
+	f := sync.OnceFunc(func() {
 		calls++
 		panic(nil)
 	})
@@ -143,7 +142,7 @@ func TestOnceFuncGoexit(t *testing.T) {
 	// If f calls Goexit, the results are unspecified. But check that f doesn't
 	// get called twice.
 	calls := 0
-	f := OnceFunc(func() {
+	f := sync.OnceFunc(func() {
 		calls++
 		runtime.Goexit()
 	})
@@ -165,7 +164,7 @@ func TestOnceFuncGoexit(t *testing.T) {
 func TestOnceFuncPanicTraceback(t *testing.T) {
 	// Test that on the first invocation of a OnceFunc, the stack trace goes all
 	// the way to the origin of the panic.
-	f := OnceFunc(onceFuncPanic)
+	f := sync.OnceFunc(onceFuncPanic)
 
 	defer func() {
 		if p := recover(); p != "x" {
@@ -185,7 +184,7 @@ func onceFuncPanic() {
 }
 
 var (
-	onceFunc = OnceFunc(func() {})
+	onceFunc = sync.OnceFunc(func() {})
 
 	onceFuncOnce sync.Once
 )
@@ -216,7 +215,7 @@ func BenchmarkOnceFunc(b *testing.B) {
 		// As of 3/2023, the compiler *does* recognize this local binding as an
 		// inlinable closure. This is the best case for OnceFunc, but probably
 		// not typical usage.
-		f := OnceFunc(func() {})
+		f := sync.OnceFunc(func() {})
 		for i := 0; i < b.N; i++ {
 			f()
 		}
@@ -224,7 +223,7 @@ func BenchmarkOnceFunc(b *testing.B) {
 }
 
 var (
-	onceValue = OnceValue(func() int { return 42 })
+	onceValue = sync.OnceValue(func() int { return 42 })
 
 	onceValueOnce  sync.Once
 	onceValueValue int
@@ -257,7 +256,7 @@ func BenchmarkOnceValue(b *testing.B) {
 	})
 	b.Run("v=Local", func(b *testing.B) {
 		b.ReportAllocs()
-		onceValue := OnceValue(func() int { return 42 })
+		onceValue := sync.OnceValue(func() int { return 42 })
 		for i := 0; i < b.N; i++ {
 			if want, got := 42, onceValue(); want != got {
 				b.Fatalf("want %d, got %d", want, got)
