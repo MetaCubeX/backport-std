@@ -1,4 +1,4 @@
-//go:build go1.19 && !go1.22
+//go:build go1.20 && !go1.22
 
 package v2
 
