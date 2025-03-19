@@ -1,6 +1,6 @@
 //go:build go1.20 && !go1.22
 
-package v2
+package rand
 
 import (
 	_ "unsafe" // for go:linkname
